@@ -1,0 +1,31 @@
+** Runs an Ubuntu image:
+docker run -it --name docker-host --rm --privileged ubuntu:bionic
+
+** Make a new root:
+mkdir /my-new-root/bin
+cp /bin/bash /bin/ls /my-new-root/bin/
+** This line will show you what you need to copy
+ldd /bin/bash
+mkdir /my-new-root/lib /my-new-root/lib64
+cp /lib/x86_64-linux-gnu/libtinfo.so.5 /lib/x86_64-linux-gnu/libdl.so.2 /lib/x86_64-linux-gnu/libc.so.6 /my-new-root/lib
+cp /lib64/ld-linux-x86-64.so.2 /my-new-root/lib64
+ldd /bin/ls
+cp /lib/x86_64-linux-gnu/libselinux.so.1 /lib/x86_64-linux-gnu/libpcre.so.3 /lib/x86_64-linux-gnu/libpthread.so.0 /my-new-root/lib
+chroot /my-new-root bash
+exit
+ldd /bin/cat
+** Now copy the relevent files
+** In my new root I can Now
+chroot . bash (to get the 'bash' working in the new root)
+** To connect to the Docker :
+docker exec -it docker-host bash
+** To kill a proccess:
+kill {number}
+** update to packegas
+apt-get update
+** get tools to create new root etc
+apt-get install debootstrap -y
+** get thee bootstrap tools
+debootstrap --variant=minbase bionic /better-root
+** Unshare resources
+unshare
