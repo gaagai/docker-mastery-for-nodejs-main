@@ -18,7 +18,7 @@ ldd /bin/cat
 ** In my new root I can Now
 chroot . bash (to get the 'bash' working in the new root)
 ** To connect to the Docker :
-docker exec -it docker-host bash
+docker exec -it docker-host bash 
 ** To kill a proccess:
 kill {number}
 ** update to packegas
@@ -27,5 +27,18 @@ apt-get update
 apt-get install debootstrap -y
 ** get thee bootstrap tools
 debootstrap --variant=minbase bionic /better-root
-** Unshare resources
-unshare
+** Unshare resources: you need to mount these
+unshare --mount --uts --ipc --net --pid --fork --user --map-root-user chroot /better-root bash   
+mount -t proc none /proc
++
+mount -t sysfs none /sys
++
+mount -t tmpfs none /tmp
+*** Control Groups:
+apt-get install -y cgroup-tools htop
+** use the tools
+cgcreate -g cpu,memory,blkio,devices,freezer:/sandbox
+
+
+**** The Docker way :) 
+docker run -it alpine:3.10
